@@ -114,7 +114,11 @@ Matrix4d Matrix4d::getPerspectiveMatrix() {
 
     double d = near_plane;
     double f = far_plane;
-    Matrix4d Mpers = Matrix4d(d / h, 0, 0, 0, 0, d / h, 0, 0, 0, 0, f / (f - d), -d * f / (f - d), 0, 0, 1, 0);
+    Matrix4d Mpers = Matrix4d(
+        d / h, 0, 0, 0, 
+        0, d / h, 0, 0, 
+        0, 0, f / (f - d), -d * f / (f - d), 
+        0, 0, 1, 0);
     return Mpers;
 }
 

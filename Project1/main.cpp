@@ -10,6 +10,9 @@
 #include "World.h"
 #include <cstdlib>
 #include <limits>
+#include <string>
+#include <sstream>
+
 
 using namespace std;
 
@@ -24,6 +27,21 @@ Matrix4d Mmodel(1, 1, 1, 1); // Model matrix
 Matrix4d Mview;  // View matrix
 Matrix4d Mpers;  // Perspective Matrix
 Matrix4d Mtransform;    // Tranformation matrix
+
+std::string removeLeadingSpacesAndTabs(const std::string& input) {
+    std::string result = input;
+    size_t firstNonSpace = result.find_first_not_of(" \t");
+
+    if (firstNonSpace != std::string::npos) {
+        result.erase(0, firstNonSpace);
+    }
+    else {
+        // The entire string consists of spaces and/or tabs, so clear the string
+        result.clear();
+    }
+
+    return result;
+}
 
 // Get the object data from .d file and return it as Object
 Object getObject(const char* filename) {
@@ -40,6 +58,7 @@ Object getObject(const char* filename) {
 
     if (house_file.is_open()) { // always check whether the file is open
         getline(house_file, str);
+        str = removeLeadingSpacesAndTabs(str);
         string noOfPoints, noOfBlocks;
 
         // Collect number of vertexes and polygons
@@ -62,58 +81,33 @@ Object getObject(const char* filename) {
 
         // Collect x,y,z coordinates
         for (j = 0; j < nPoints; j++) {
-            string x, y, z;
-            int count = 0;
             getline(house_file, str);
-            for (k = 0; k < str.size(); k++) {
-                if (str[k] == ' ' || str[k] == '\t') {
-                    count++;
-                }
-                else if (count == 0) {
-                    x += str[k];
-                }
-                else if (count == 1) {
-                    y += str[k];
-                }
-                else {
-                    z += str[k];
-                }
-            }
-            pts[j].x = std::atof(x.c_str());
-            pts[j].y = std::atof(y.c_str());
-            pts[j].z = std::atof(z.c_str());
+            str = removeLeadingSpacesAndTabs(str);
+            std::istringstream iss(str);
+            iss >> pts[j].x >> pts[j].y >> pts[j].z;
         }
 
         // Collect the vertexes data for each polygon
         for (j = 0; j < nBlocks; j++) {
-            vector <int> block;
-            int count = 0;
-            string num;
             getline(house_file, str);
-            for (k = 0; k < str.size(); k++) {
-                if (str[k] == ' ' || str[k] == '\t') {
-                    if (count != 0) {
-                        block.push_back(atoi(num.c_str()));
-                    }
-                    else {
-                        count++;
-                    }
-                    num = "";
-                }
-                else {
-                    num += str[k];
-                }
+            str = removeLeadingSpacesAndTabs(str);
+            std::istringstream iss(str);
+            int nVertices;
+            iss >> nVertices;
+
+            vector<int> block(nVertices);
+            for (i = 0; i < nVertices; i++) {
+                iss >> block[i];
             }
-            block.push_back(atoi(num.c_str()));
             blocks.push_back(block);
         }
-        
+
         // Convert all of the previously obtained data into an Object
         Object object(nBlocks);
         for (i = 0; i < nBlocks; i++) {
             int nVertices = blocks[i].size();
             Polygon polygon(nVertices);
-            for (j = 0; j < blocks[i].size(); j++) {
+            for (j = 0; j < nVertices; j++) {
                 polygon.vertices.push_back(pts[blocks[i][j] - 1]);
             }
             object.poly.push_back(polygon);
@@ -217,7 +211,7 @@ int main(void) {
     Ccord = Vector(0,0,10);
     W.Y = Vector(0, 1, 0);
     
-    object = getObject("./D files/cow.d.txt");
+    object = getObject("./D files/donut.d.txt");
 
     GLFWwindow* window;
 

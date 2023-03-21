@@ -21,7 +21,7 @@ void Vector::unitVector() {
     mag += pow(this->y, 2);
     mag += pow(this->z, 2);
     mag = sqrt(mag);
-	if (mag == 0) {
+	if (mag <= 1e-8) {
 		this->x = 0;
 		this->y = 0;
 		this->z = 0;
@@ -63,3 +63,4 @@ void Vector::print() {
 double Vector::dot(Vector v) {
 	return this->x * v.x + this->y * v.y + this->z * v.z;
 }
+
