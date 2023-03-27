@@ -1,6 +1,5 @@
 #include "Matrix.h"
 #include "Vector.h"
-#include "World.h"
 #include <iostream>
 #include <fstream>
 #include <cmath>
@@ -88,11 +87,11 @@ Vector Matrix4d::operator*(const Vector& v) const {
 }
 
 // Return View Matrix
-Matrix4d Matrix4d::getViewMatrix(Vector Ccord, Vector Pref, World w) {
+Matrix4d Matrix4d::getViewMatrix(Vector Ccord, Vector Pref, Vector Vprime) {
     Vector Nvec = Pref - Ccord;
     Nvec.unitVector();
     Vector N = Nvec;
-    Vector Uvec = N * w.Y;
+    Vector Uvec = N * Vprime;
     Uvec.unitVector();
     Vector U = Uvec;
     Vector V = U * N;

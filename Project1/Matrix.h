@@ -1,7 +1,6 @@
 #ifndef MATRIX_H
 #define MATRIX_H
 #include "Vector.h"
-#include "World.h"
 #include <cmath>
 
 class Matrix4d {
@@ -18,7 +17,7 @@ public:
     Matrix4d operator*(const Matrix4d& other) const; // matrix multiplication
     Vector operator*(const Vector& v) const; // matrix multiplication with Vector
 
-    static Matrix4d getViewMatrix(Vector Ccord, Vector Pref, World w); // Get View matrix
+    static Matrix4d getViewMatrix(Vector Ccord, Vector Pref, Vector Vprime); // Get View matrix
     static Matrix4d getPerspectiveMatrix(); // Get perspective matrix
 
     void print();
