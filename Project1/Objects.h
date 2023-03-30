@@ -10,6 +10,7 @@ public:
     std::vector<Vector> vertices;
     int nPts;
     Vector normal;
+    bool backface;
     Polygon(int nPts);
 };
 

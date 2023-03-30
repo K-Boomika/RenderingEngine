@@ -3,6 +3,7 @@
 
 Polygon::Polygon(int nPts) {
     this->nPts = nPts;
+    this->backface = false;
 }
 
 Object::Object(int nPoly) {
@@ -25,6 +26,12 @@ void Object::calculateNormals() {
         }
         normal.unitVector();
         this->poly[i].normal = normal;
+        if (this->poly[i].normal.z>0) {
+            this->poly[i].backface = true;
+        }
+        else {
+            this->poly[i].backface = false;
+        }
     }
 }
 

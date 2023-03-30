@@ -163,7 +163,7 @@ void drawObject(vector<Object> objects) {
         for (int i = 0; i < objects[k].nPoly; i++)
         {
             // Backface and hidden surface conditions
-            if (objects[k].poly[i].normal.z > 0) {
+            if (objects[k].poly[i].backface) {
                 continue;
             }
             for (int j = 0; j < objects[k].poly[i].nPts; j++) {
