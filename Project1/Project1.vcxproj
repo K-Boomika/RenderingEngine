@@ -133,12 +133,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Edge.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Matrix.cpp" />
     <ClCompile Include="Objects.cpp" />
     <ClCompile Include="Vector.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Edge.h" />
     <ClInclude Include="Matrix.h" />
     <ClInclude Include="Objects.h" />
     <ClInclude Include="Vector.h" />

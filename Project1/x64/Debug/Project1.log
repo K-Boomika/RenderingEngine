@@ -1,14 +1,21 @@
 ﻿  Objects.cpp
-  main.cpp
-C:\Users\kboom\OneDrive\Documents\GitHub\RenderingEngine\Project1\main.cpp(109,45): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\kboom\OneDrive\Documents\GitHub\RenderingEngine\Project1\main.cpp(56,15): warning C4101: 'k': unreferenced local variable
-C:\Users\kboom\OneDrive\Documents\GitHub\RenderingEngine\Project1\main.cpp(124,30): warning C4244: 'argument': conversion from 'double' to 'GLfloat', possible loss of data
-C:\Users\kboom\OneDrive\Documents\GitHub\RenderingEngine\Project1\main.cpp(124,24): warning C4244: 'argument': conversion from 'double' to 'GLfloat', possible loss of data
-C:\Users\kboom\OneDrive\Documents\GitHub\RenderingEngine\Project1\main.cpp(124,18): warning C4244: 'argument': conversion from 'double' to 'GLfloat', possible loss of data
-C:\Users\kboom\OneDrive\Documents\GitHub\RenderingEngine\Project1\main.cpp(125,30): warning C4244: 'argument': conversion from 'double' to 'GLfloat', possible loss of data
-C:\Users\kboom\OneDrive\Documents\GitHub\RenderingEngine\Project1\main.cpp(125,24): warning C4244: 'argument': conversion from 'double' to 'GLfloat', possible loss of data
-C:\Users\kboom\OneDrive\Documents\GitHub\RenderingEngine\Project1\main.cpp(125,18): warning C4244: 'argument': conversion from 'double' to 'GLfloat', possible loss of data
-C:\Users\kboom\OneDrive\Documents\GitHub\RenderingEngine\Project1\main.cpp(152,46): warning C4305: 'initializing': truncation from 'double' to 'GLfloat'
-  Generating Code...
-C:\Users\kboom\OneDrive\Documents\GitHub\RenderingEngine\Project1\main.cpp(119): warning C4715: 'getObject': not all control paths return a value
+C:\Users\kboom\OneDrive\Documents\GitHub\RenderingEngine\Project1\Objects.cpp(17,17): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+C:\Users\kboom\OneDrive\Documents\GitHub\RenderingEngine\Project1\Objects.cpp(18,17): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+C:\Users\kboom\OneDrive\Documents\GitHub\RenderingEngine\Project1\Objects.cpp(25,40): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+C:\Users\kboom\OneDrive\Documents\GitHub\RenderingEngine\Project1\Objects.cpp(28,40): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+C:\Users\kboom\OneDrive\Documents\GitHub\RenderingEngine\Project1\Objects.cpp(99,24): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Users\kboom\OneDrive\Documents\GitHub\RenderingEngine\Project1\Objects.cpp(100,24): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Users\kboom\OneDrive\Documents\GitHub\RenderingEngine\Project1\Objects.cpp(107,20): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\kboom\OneDrive\Documents\GitHub\RenderingEngine\Project1\Objects.cpp(108,23): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\kboom\OneDrive\Documents\GitHub\RenderingEngine\Project1\Objects.cpp(109,15): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Users\kboom\OneDrive\Documents\GitHub\RenderingEngine\Project1\Objects.cpp(110,15): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Users\kboom\OneDrive\Documents\GitHub\RenderingEngine\Project1\Objects.cpp(114,20): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\kboom\OneDrive\Documents\GitHub\RenderingEngine\Project1\Objects.cpp(115,23): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\kboom\OneDrive\Documents\GitHub\RenderingEngine\Project1\Objects.cpp(116,15): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Users\kboom\OneDrive\Documents\GitHub\RenderingEngine\Project1\Objects.cpp(117,15): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Users\kboom\OneDrive\Documents\GitHub\RenderingEngine\Project1\Objects.cpp(121,21): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+C:\Users\kboom\OneDrive\Documents\GitHub\RenderingEngine\Project1\Objects.cpp(122,21): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+C:\Users\kboom\OneDrive\Documents\GitHub\RenderingEngine\Project1\Objects.cpp(179,16): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\kboom\OneDrive\Documents\GitHub\RenderingEngine\Project1\Objects.cpp(180,16): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\kboom\OneDrive\Documents\GitHub\RenderingEngine\Project1\Objects.cpp(181,20): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
   Project1.vcxproj -> C:\Users\kboom\OneDrive\Documents\GitHub\RenderingEngine\x64\Debug\Project1.exe

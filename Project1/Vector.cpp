@@ -48,12 +48,28 @@ Vector Vector::operator+(const Vector& v) {
 	return sub;
 }
 
+Vector Vector::operator+(const double& d) {
+	Vector sub;
+	sub.x = this->x + d;
+	sub.y = this->y + d;
+	sub.z = this->z + d;
+	return sub;
+}
+
 Vector Vector::operator*(const Vector& v) {
 	Vector mul;
 	mul.x = this->y * v.z - this->z * v.y;
 	mul.y = this->z * v.x - this->x * v.z;
 	mul.z = this->x * v.y - this->y * v.x;
 	return mul;
+}
+
+Vector Vector::operator*(const double& d) {
+	Vector sub;
+	sub.x = this->x * d;
+	sub.y = this->y * d;
+	sub.z = this->z * d;
+	return sub;
 }
 
 void Vector::print() {

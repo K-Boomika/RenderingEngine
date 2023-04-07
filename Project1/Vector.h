@@ -14,6 +14,8 @@ public:
     Vector operator-(const Vector& v);  // Vector - Vector function
     Vector operator+(const Vector& v);  // Vector + Vector function
     Vector operator*(const Vector& v);  // Vector * Vector function
+    Vector operator+(const double& d);  // Vector + Double function
+    Vector operator*(const double& d);  // Vector * Double function
 
     double dot(Vector v); // Vector dot Vector function
 
