@@ -10,7 +10,8 @@
 #include <limits>
 #include <string>
 #include <sstream>
-
+#include <thread>
+#include <chrono>
 
 using namespace std;
 
@@ -26,12 +27,10 @@ Matrix4d Mmodel(1, 1, 1, 1); // Model matrix
 Matrix4d Mview;  // View matrix
 Matrix4d Mpers;  // Perspective Matrix
 Matrix4d Mtransform;    // Tranformation matrix
-vector<float> ztemp(2001, INFINITY);
-vector<Vector> ftemp(2001, Vector{ 0,0,0 });
-vector<vector<float>> Z_depth(2001, ztemp);
-vector<vector<Vector>> Z_frame(2001, ftemp);
-vector<vector<float>> Z_depth_temp(2001, ztemp);
-vector<vector<Vector>> Z_frame_temp(2001, ftemp);
+vector<float> depth(2001, std::numeric_limits<float>::max());
+vector<Vector> color(2001, Vector{ 0,0,0 });
+vector<vector<float>> Z_depth(2001, depth);
+vector<vector<Vector>> Z_frame(2001, color);
 bool needsRedraw = true;
 
 std::string removeLeadingSpacesAndTabs(const std::string& input) {
@@ -47,11 +46,6 @@ std::string removeLeadingSpacesAndTabs(const std::string& input) {
     }
 
     return result;
-}
-
-void clearBuffers() {
-    Z_depth = Z_depth_temp;
-    Z_frame = Z_frame_temp;
 }
 
 // Get the object data from .d file and return it as Object
@@ -139,8 +133,6 @@ void drawLine(Vector v1, Vector v2) {
 // Display objects obtained by Z-buffer algorithm
 void display_zbuffer() {
 
-    glClear(GL_COLOR_BUFFER_BIT);
-    glPointSize(1.0f);
     glBegin(GL_POINTS);
     for (int i = 0; i <= 2000; i++)
     {
@@ -157,12 +149,6 @@ void display_zbuffer() {
 // Dram the object by applying transformation matrix multiplication to all vertexes in all polygons of the object
 void drawObject(vector<Object> objects) {
 
-    clearBuffers();
-
-    // Enable depth test
-    glEnable(GL_DEPTH_TEST);
-    glDepthFunc(GL_LEQUAL);
-
     for (int k = 0; k < nObjects; k++)
     {
         // Apply transformation matrix
@@ -177,95 +163,41 @@ void drawObject(vector<Object> objects) {
         }
         objects[k].calculateNormals();
     }
-
     for (int k = 0; k < nObjects; k++)
     {
         for (int i = 0; i < objects[k].nPoly; i++) {
-            objects[k].poly[i].findScanLineScope();
+            objects[k].poly[i].findScanLineLimit();
         }
-        objects[k].creatEdgeTable();
-        objects[k].ScanConvertion(Z_depth, Z_frame);
+        objects[k].createEdgeTable();
     }
-
-    display_zbuffer();
-
-    /*for (int k = 0; k < nObjects; k++)
+    for (int k = 0; k < nObjects; k++)
     {
-        // Iterate over polygons and draw them
-        for (int i = 0; i < objects[k].nPoly; i++)
-        {
-            // Backface and hidden surface conditions
-            if (objects[k].poly[i].backface) {
-                continue;
-            }
-            for (int j = 0; j < objects[k].poly[i].nPts; j++) {
-                Vector v1(objects[k].poly[i].vertices[j].x, objects[k].poly[i].vertices[j].y, objects[k].poly[i].vertices[j].z);
-                Vector v2(objects[k].poly[i].vertices[(j + 1) % objects[k].poly[i].nPts].x, objects[k].poly[i].vertices[(j + 1) % objects[k].poly[i].nPts].y, objects[k].poly[i].vertices[(j + 1) % objects[k].poly[i].nPts].z);
-                //v1.print();
-                drawLine(v1, v2);
-            }
-        }
-    }*/
-
-    glDisable(GL_DEPTH_TEST);
-}
-
-// Keyboard control to move the camera to different directions: up, down, left, right, front and back
-void handleKeyboardInput(GLFWwindow* window, int key, int scancode, int action, int mods) {
-    if (key == GLFW_KEY_W && action == GLFW_PRESS) {
-        Vector up(0, 1, 0);
-        Ccord = Ccord + up;
-        Mview = Matrix4d::getViewMatrix(Ccord, Pref, Vprime);
-        needsRedraw = true;
+        objects[k].scanConvert(Z_depth, Z_frame);
     }
-    if (key == GLFW_KEY_S && action == GLFW_PRESS) {
-        Vector down(0, 1, 0);
-        Ccord = Ccord - down;
-        Mview = Matrix4d::getViewMatrix(Ccord, Pref, Vprime);
-        needsRedraw = true;
-    }
-    if (key == GLFW_KEY_A && action == GLFW_PRESS) {
-        Vector right(1, 0, 0);
-        Ccord = Ccord - right;
-        Mview = Matrix4d::getViewMatrix(Ccord, Pref, Vprime);
-        needsRedraw = true;
-    }
-    if (key == GLFW_KEY_D && action == GLFW_PRESS) {
-        Vector left(1, 0, 0);
-        Ccord = Ccord + left;
-        Mview = Matrix4d::getViewMatrix(Ccord, Pref, Vprime);
-        needsRedraw = true;
-    }
-    if (key == GLFW_KEY_DOWN && action == GLFW_PRESS) {
-        Vector toward(0, 0, 1);
-        Ccord = Ccord + toward;
-        Mview = Matrix4d::getViewMatrix(Ccord, Pref, Vprime);
-        needsRedraw = true;
-    }
-    if (key == GLFW_KEY_UP && action == GLFW_PRESS) {
-        Vector backward(0, 0, 1);
-        Ccord = Ccord - backward;
-        Mview = Matrix4d::getViewMatrix(Ccord, Pref, Vprime);
-        needsRedraw = true;
-    }
+    display_zbuffer();
 }
 
 int main(void) {
 
-    // Define Pref, Camera coordinate and World coordinate
+    // Define Pref, Camera coordinate and VPrime coordinate
     Pref = Vector(0, 0, 0);
-    Ccord = Vector(0, 0, 200);
+    Ccord = Vector(0, 15, 14);
     Vprime = Vector(0, 1, 0);
 
     // Add objects
-    Object object = getObject("./D files/shuttle.d.txt");
+    Object object = getObject("./D files/cow.d.txt");
     objects.push_back(object);
     objects[nObjects].randomColor();
     nObjects++;
-    object = getObject("./D files/house.d.txt");
+    object = getObject("./D files/knight.d.txt");
     objects.push_back(object);
     objects[nObjects].randomColor();
     nObjects++;
+
+    // Apply matrix transformation
+    Mview = Matrix4d::getViewMatrix(Ccord, Pref, Vprime);
+    Mpers = Matrix4d::getPerspectiveMatrix();
+    Mtransform = Mpers * Mview * Mmodel;
 
     GLFWwindow* window;
 
@@ -281,36 +213,27 @@ int main(void) {
         return -1;
     }
 
-    // Set the key callback function
-    glfwSetKeyCallback(window, handleKeyboardInput);
-
     /* Make the window's context current */
     glfwMakeContextCurrent(window);
+    glfwWindowHint(GLFW_DOUBLEBUFFER, GL_TRUE); // Enable double buffering
+    glfwSwapInterval(1);
 
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
     {
-        if (needsRedraw)
-        {
-            // Apply matrix transformation
-            Mview = Matrix4d::getViewMatrix(Ccord, Pref, Vprime);
-            Mpers = Matrix4d::getPerspectiveMatrix();
-            Mtransform = Mpers * Mview * Mmodel;
+        glClearColor(0.0f, 0.0f, 0.0f, 1.0f); // Set the clear color to black
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+        glFlush();
 
-            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        glMatrixMode(GL_MODELVIEW);
+        glLoadIdentity();
 
-            glMatrixMode(GL_MODELVIEW);
-            glLoadIdentity();
+        glPushMatrix();
+        drawObject(objects);
+        glPopMatrix();
 
-            glPushMatrix();
-            drawObject(objects);
-            glPopMatrix();
-
-            /* Swap front and back buffers */
-            glfwSwapBuffers(window);
-
-            needsRedraw = false;
-        }
+        /* Swap front and back buffers */
+        glfwSwapBuffers(window);
 
         /* Poll for and process events */
         glfwPollEvents();

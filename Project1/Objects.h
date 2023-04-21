@@ -13,7 +13,7 @@ public:
     float colorR, colorG, colorB;
     int ymin, ymax;
     Polygon(int nPts);
-    void findScanLineScope();
+    void findScanLineLimit();
 };
 
 class Object {
@@ -24,8 +24,8 @@ public:
     Object();
     void calculateNormals();
     void randomColor();
-    void creatEdgeTable();
-    void ScanConvertion(std::vector<std::vector<float>>& Z_depth, std::vector<std::vector<Vector>>& Z_frame);
+    void createEdgeTable();
+    void scanConvert(std::vector<std::vector<float>>& Z_depth, std::vector<std::vector<Vector>>& Z_frame);
     std::vector<Edge>* edgetables;
 };
 inline bool Ymincompare(const Edge& e1, const Edge& e2) {

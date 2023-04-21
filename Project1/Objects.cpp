@@ -12,7 +12,7 @@ Polygon::Polygon(int nPts) {
 	this->colorB = 0.0;
 }
 
-void Polygon::findScanLineScope()
+void Polygon::findScanLineLimit()
 {
     int tempmin = INFINITY;
     int tempmax = -INFINITY;
@@ -41,6 +41,7 @@ Object::Object(int nPoly) {
 	this->edgetables = new std::vector<Edge>[nPoly];
 }
 
+// Calculate normals for each polygon
 void Object::calculateNormals() {
     for (int i = 0; i < nPoly; i++) {
         Polygon& poly = this->poly[i];
@@ -62,6 +63,7 @@ void Object::calculateNormals() {
     }
 }
 
+// Select random color for each polygon
 void Object::randomColor()
 {
 	for (auto& polygon : poly) {
@@ -71,7 +73,7 @@ void Object::randomColor()
 	}
 }
 
-void Object::creatEdgeTable()
+void Object::createEdgeTable()
 {
 	//create the edge table for each polygon
 	for (int i = 0; i < nPoly; i++)
@@ -126,13 +128,15 @@ void Object::creatEdgeTable()
 				tempedge.z_over_y = dz;
 				temptable.push_back(tempedge);
 			}
+
+			//sort based on Y
 			sort(temptable.begin(), temptable.end(), Ymincompare);
 			edgetables[i] = temptable;
 		}
 	}
 }
 
-void Object::ScanConvertion(std::vector<std::vector<float>>& Z_depth, std::vector<std::vector<Vector>>& Z_frame) {
+void Object::scanConvert(std::vector<std::vector<float>>& Z_depth, std::vector<std::vector<Vector>>& Z_frame) {
 	//use AET to fulfill the polygons
 	for (int i = 0; i < nPoly; i++)
 	{
@@ -156,6 +160,8 @@ void Object::ScanConvertion(std::vector<std::vector<float>>& Z_depth, std::vecto
 						break;
 					}
 				}
+
+				//sort based on X
 				sort(AET.begin(), AET.end(), Xcompare);
 
 				for (int k = 0; k < AET.size() / 2; k = k + 2) {

@@ -11,4 +11,4 @@ public:
 	Edge& operator= (const Edge& edge);
 };
 
-#endif //__EDGE__
+#endif
