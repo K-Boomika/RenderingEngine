@@ -19,7 +19,7 @@ public:
 
     double dot(Vector v); // Vector dot Vector function
 
-    void print();
+    void print() const;;
 };
 
 #endif

@@ -72,7 +72,7 @@ Vector Vector::operator*(const double& d) {
 	return sub;
 }
 
-void Vector::print() {
+void Vector::print()  const{
 	std::cout << x << " " << y << " " << z << std::endl;
 }
 

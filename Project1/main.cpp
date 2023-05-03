@@ -12,6 +12,8 @@
 #include <sstream>
 #include <thread>
 #include <chrono>
+#include <map>
+#include <set>
 
 using namespace std;
 
@@ -32,6 +34,8 @@ vector<Vector> color(2001, Vector{ 0,0,0 });
 vector<vector<float>> Z_depth(2001, depth);
 vector<vector<Vector>> Z_frame(2001, color);
 bool needsRedraw = true;
+int shadingModel = 1;
+std::vector<DrawLine> DrawLines;
 
 std::string removeLeadingSpacesAndTabs(const std::string& input) {
     std::string result = input;
@@ -114,6 +118,14 @@ Object getObject(const char* filename) {
             Polygon polygon(nVertices);
             for (j = 0; j < nVertices; j++) {
                 polygon.vertices.push_back(pts[blocks[i][j] - 1]);
+                if (!object.vertexAdjPoly[pts[blocks[i][j] - 1]].empty()) 
+                {
+                    object.vertexAdjPoly[pts[blocks[i][j] - 1]].push_back(i);
+                }
+                else 
+                {
+                    object.vertexAdjPoly[pts[blocks[i][j] - 1]] = { i };
+                }
             }
             object.poly.push_back(polygon);
         }
@@ -168,32 +180,55 @@ void drawObject(vector<Object> objects) {
         for (int i = 0; i < objects[k].nPoly; i++) {
             objects[k].poly[i].findScanLineLimit();
         }
-        objects[k].createEdgeTable();
+        objects[k].prandomColor();
+        if (shadingModel == 2 || shadingModel == 3) {
+            objects[k].calculate_vertex_normal();
+        }
+        objects[k].createEdgeTable(shadingModel, Ccord);
     }
     for (int k = 0; k < nObjects; k++)
     {
-        objects[k].scanConvert(Z_depth, Z_frame);
+        objects[k].scanConvert(shadingModel, Z_depth, Z_frame, Ccord, DrawLines);
     }
     display_zbuffer();
 }
 
 int main(void) {
-
+    
     // Define Pref, Camera coordinate and VPrime coordinate
+    /* Donut constant shading
     Pref = Vector(0, 0, 0);
-    Ccord = Vector(0, 15, 14);
+    Ccord = Vector(0, 1, 2);
     Vprime = Vector(0, 1, 0);
 
     // Add objects
-    Object object = getObject("./D files/cow.d.txt");
+    Object object = getObject("./D files/donut.d.txt");
     objects.push_back(object);
-    objects[nObjects].randomColor();
-    nObjects++;
-    object = getObject("./D files/knight.d.txt");
+    objects[nObjects].objectColor = Vector(1, 0, 1);
+    objects[nObjects].ka = Vector(0.3, 0.3, 0.3);
+    objects[nObjects].kd = Vector(0.3, 0.3, 0.3);
+    objects[nObjects].ks = Vector(0.9, 0.9, 0.9);
+    objects[nObjects].focus = 30;
+    nObjects++;*/
+    Pref = Vector(0, 0, 0);
+    Ccord = Vector(0, 1, 2);
+    Vprime = Vector(0, 1, 0);
+
+    // Add objects
+    Object object = getObject("./D files/donut.d.txt");
     objects.push_back(object);
-    objects[nObjects].randomColor();
+    objects[nObjects].objectColor = Vector(1, 0, 1);
+    objects[nObjects].ka = Vector(0.3, 0.3, 0.3);
+    objects[nObjects].kd = Vector(0.3, 0.3, 0.3);
+    objects[nObjects].ks = Vector(0.9, 0.9, 0.9);
+    objects[nObjects].focus = 30;
     nObjects++;
 
+    //object = getObject("./D files/knight.d.txt");
+    //objects.push_back(object);
+    //objects[nObjects].randomColor();
+    //nObjects++;
+    
     // Apply matrix transformation
     Mview = Matrix4d::getViewMatrix(Ccord, Pref, Vprime);
     Mpers = Matrix4d::getPerspectiveMatrix();
@@ -201,44 +236,50 @@ int main(void) {
 
     GLFWwindow* window;
 
-    /* Initialize the library */
+    // Initialize the library 
     if (!glfwInit())
         return -1;
 
-    /* Create a windowed mode window and its OpenGL context */
-    window = glfwCreateWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Computer Graphics II : Project 2 - Boomika Karuppaiah", NULL, NULL);
+    // Create a windowed mode window and its OpenGL context
+    window = glfwCreateWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Computer Graphics II : Project 3 - Boomika Karuppaiah", NULL, NULL);
     if (!window)
     {
         glfwTerminate();
         return -1;
     }
 
-    /* Make the window's context current */
+    // Make the window's context current 
     glfwMakeContextCurrent(window);
     glfwWindowHint(GLFW_DOUBLEBUFFER, GL_TRUE); // Enable double buffering
     glfwSwapInterval(1);
 
-    /* Loop until the user closes the window */
+    // Loop until the user closes the window 
     while (!glfwWindowShouldClose(window))
     {
-        glClearColor(0.0f, 0.0f, 0.0f, 1.0f); // Set the clear color to black
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-        glFlush();
 
-        glMatrixMode(GL_MODELVIEW);
-        glLoadIdentity();
+        if (needsRedraw)
+        {
+            glClearColor(1.0f, 1.0f, 1.0f, 1.0f); // Set the clear color to black
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+            glFlush();
 
-        glPushMatrix();
-        drawObject(objects);
-        glPopMatrix();
+            glMatrixMode(GL_MODELVIEW);
+            glLoadIdentity();
 
-        /* Swap front and back buffers */
-        glfwSwapBuffers(window);
+            glPushMatrix();
+            drawObject(objects);
+            needsRedraw = false;
+            glPopMatrix();
 
-        /* Poll for and process events */
-        glfwPollEvents();
+            // Swap front and back buffers 
+            glfwSwapBuffers(window);
+
+            // Poll for and process events
+            glfwPollEvents();
+        }
     }
 
     glfwTerminate();
     return 0;
+   
 }
