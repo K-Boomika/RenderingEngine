@@ -3,8 +3,8 @@
 #include <vector>
 #include "Vector.h"
 #include "Edge.h"
-#include "Horizon.h"
-#include "Draw_Line.h"
+#include "ShadingModel.h"
+#include "DrawLine.h"
 #include <map>
 #include <set>
 #include "Common.h"
@@ -41,6 +41,7 @@ public:
     std::map<Vector, std::vector<int>, VectorCompare> vertexAdjPoly;
     std::map<Vector, Vector, VectorCompare> vertexNormal;
     std::map<Vector, Vector, VectorCompare> vertexColor;
+    std::map<Vector, Vector, VectorCompare> transformedVertex;
     int nPoly;
     Object(int nPoly);
     Object();
@@ -56,7 +57,8 @@ public:
     void calculate_vertex_normal();
     void scanConvert(int shadingModel, std::vector<std::vector<float>>& Z_depth, std::vector<std::vector<Vector>>& Z_frame, Vector camera, std::vector<DrawLine> DrawLines);
     std::vector<Edge>* edgetables;
-    std::vector<Horizon>* Horizons;
+    std::vector<ShadingModel>* ShadingModels;
+    void updateAdjMap();
 };
 inline bool Ymincompare(const Edge& e1, const Edge& e2) {
     return e1.Ymin < e2.Ymin;

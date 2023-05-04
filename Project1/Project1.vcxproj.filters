@@ -30,13 +30,13 @@
     <ClCompile Include="Edge.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Horizon.cpp">
+    <ClCompile Include="ShadingModel.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Illumination.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Draw_Line.cpp">
+    <ClCompile Include="DrawLine.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Common.cpp">
@@ -56,13 +56,13 @@
     <ClInclude Include="Objects.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Horizon.h">
+    <ClInclude Include="ShadingModel.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Illumination.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Draw_Line.h">
+    <ClInclude Include="DrawLine.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Common.h">

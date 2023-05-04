@@ -1,6 +1,6 @@
 #include "Edge.h"
 #include "Objects.h"
-#include "Draw_Line.h"
+#include "DrawLine.h"
 #include <vector>
 #include <algorithm>
 #include<iostream>
@@ -22,6 +22,7 @@ void Polygon::findScanLineLimit()
     for (int i = 0; i < this->nPts; i++)
     {
         this->vertices[i] = (this->vertices[i] + 1.0) * 1000;
+		//this->vertices[i].print();
 
         if (this->vertices[i].y < tempmin) {
             tempmin = this->vertices[i].y;
@@ -41,7 +42,7 @@ Object::Object() {
 Object::Object(int nPoly) {
     this->nPoly = nPoly;
 	this->edgetables = new std::vector<Edge>[nPoly];
-	this->Horizons = new std::vector<Horizon>[nPoly];
+	this->ShadingModels = new std::vector<ShadingModel>[nPoly];
 }
 
 // Calculate normals for each polygon
@@ -83,6 +84,14 @@ void Object::prandomColor()
 	}
 }
 
+void Object::updateAdjMap() {
+	for (auto it = transformedVertex.begin(); it != transformedVertex.end(); ++it) {
+		std::vector<int> temp = vertexAdjPoly[it->first];
+		vertexAdjPoly.erase(it->first);
+		vertexAdjPoly.insert(std::make_pair(it->second, temp));
+	}
+}
+
 void Object::calculate_vertex_normal() {
 	for (auto it = vertexAdjPoly.begin(); it != vertexAdjPoly.end(); ++it) {
 		Vector temp;
@@ -108,7 +117,7 @@ void Object::createEdgeTable(int shadingModel, Vector camera)
 					ka, kd, ks, fatt, camera, focus);
 		}
 	}
-	std::cout << std::endl;
+	//std::cout << std::endl;
 	//create the edge table for each polygon
 	for (int i = 0; i < nPoly; i++)
 	{
@@ -122,15 +131,7 @@ void Object::createEdgeTable(int shadingModel, Vector camera)
 			for (int j = 0; j < nPts; j++) {
 				vertices[j] = polygon.vertices[j];
 				if (shadingModel == 2) {
-					//for (auto it = vertexColor.begin(); it != vertexColor.end(); ++it) {
-					//	std::cout <<"new"; it->first.print(); it->second.print();
-					//}
-					vertices[j].print();
-					Vector(static_cast<float>(vertices[j].x) / 1000.0f - 1.0, static_cast<float>(vertices[j].y) / 1000.0f - 1.0, static_cast<float>(vertices[j].z) / 1000.0f - 1.0).print();
-					verticesColor[j] = vertexColor[Vector(static_cast<float>(vertices[j].x) / 1000.0f - 1.0, static_cast<float>(vertices[j].y) / 1000.0f - 1.0, static_cast<float>(vertices[j].z) / 1000.0f - 1.0)];
-					std::cout << std::endl;
-					verticesColor[j].print();
-					vertexColor[vertices[j]].print();
+					verticesColor[j] = vertexColor[vertices[j]];
 				}
 				else if (shadingModel == 3) {
 					verticesNormal[j] = vertexNormal[vertices[j]];
@@ -171,13 +172,13 @@ void Object::createEdgeTable(int shadingModel, Vector camera)
 
 				if ((int)v1.y == (int)v2.y) {
 					if (shadingModel == 1) {
-						Horizons[i].push_back(Horizon(v1, v2));
+						ShadingModels[i].push_back(ShadingModel(v1, v2));
 					}
 					else if (shadingModel == 2) {
-						Horizons[i].push_back(Horizon(v1, v2, v1Color, v2Color));
+						ShadingModels[i].push_back(ShadingModel(v1, v2, v1Color, v2Color));
 					}
 					else if (shadingModel == 3) {
-						Horizons[i].push_back(Horizon(v1, v2, v1Normal, v2Normal));
+						ShadingModels[i].push_back(ShadingModel(v1, v2, v1Normal, v2Normal));
 					}
 					continue;
 				}
@@ -253,7 +254,6 @@ void Object::scanConvert(int shadingModel, std::vector<std::vector<float>>& Z_de
 
 			std::vector<Edge> AET;//active edge table
 			std::vector<Edge> edgetable = this->edgetables[i];//edge table
-			//Vector color = { polygon.colorR,polygon.colorG,polygon.colorB };
 			Vector color = objectColor;
 			int nPts = polygon.nPts;
 			Vector constantColor;
@@ -263,23 +263,22 @@ void Object::scanConvert(int shadingModel, std::vector<std::vector<float>>& Z_de
 				constantColor = illuminationModel(polygon.normal, objectColor,
 					ambientLightIntensity, LightIntensity, LightColor, LightDirection,
 					ka, kd, ks, fatt, camera, focus);
-				//constantColor.print();
 
 				color = constantColor;
 				
-				for (int h = 0; h < Horizons[i].size(); h++) {
-					Horizons[i][h].Constant_DrawHorizon(color, Z_depth, Z_frame);
+				for (int h = 0; h < ShadingModels[i].size(); h++) {
+					ShadingModels[i][h].ConstantDraw(color, Z_depth, Z_frame);
 				}
 			}
 			if (shadingModel == 2) {
-				//std::cout << Horizons[i].size();
-				for (int h = 0; h < Horizons[i].size(); h++) {
-					Horizons[i][h].Gouraud_DrawHorizon(color, camera, ka, kd, ks, focus, Z_depth, Z_frame);
+				//std::cout << ShadingModels[i].size();
+				for (int h = 0; h < ShadingModels[i].size(); h++) {
+					ShadingModels[i][h].GouraudDraw(Z_depth, Z_frame);
 				}
 			}
 			if (shadingModel == 3) {
-				for (int h = 0; h < Horizons[i].size(); h++) {
-					Horizons[i][h].Phong_DrawHorizon(color, camera, ka, kd, ks, focus, Z_depth, Z_frame);
+				for (int h = 0; h < ShadingModels[i].size(); h++) {
+					ShadingModels[i][h].PhongDraw(color, camera, ka, kd, ks, focus, Z_depth, Z_frame);
 				}
 			}
 

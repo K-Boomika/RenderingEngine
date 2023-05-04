@@ -134,9 +134,9 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Common.cpp" />
-    <ClCompile Include="Draw_Line.cpp" />
+    <ClCompile Include="DrawLine.cpp" />
     <ClCompile Include="Edge.cpp" />
-    <ClCompile Include="Horizon.cpp" />
+    <ClCompile Include="ShadingModel.cpp" />
     <ClCompile Include="Illumination.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Matrix.cpp" />
@@ -145,9 +145,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Common.h" />
-    <ClInclude Include="Draw_Line.h" />
+    <ClInclude Include="DrawLine.h" />
     <ClInclude Include="Edge.h" />
-    <ClInclude Include="Horizon.h" />
+    <ClInclude Include="ShadingModel.h" />
     <ClInclude Include="Illumination.h" />
     <ClInclude Include="Matrix.h" />
     <ClInclude Include="Objects.h" />

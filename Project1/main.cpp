@@ -167,20 +167,26 @@ void drawObject(vector<Object> objects) {
         for (int i = 0; i < objects[k].nPoly; i++) {
             for (int j = 0; j < objects[k].poly[i].nPts; j++) {
                 Vector v(objects[k].poly[i].vertices[j].x, objects[k].poly[i].vertices[j].y, objects[k].poly[i].vertices[j].z);
+                Vector old = v;
                 v = Mtransform * v;
                 objects[k].poly[i].vertices[j].x = v.x;
                 objects[k].poly[i].vertices[j].y = v.y;
-                objects[k].poly[i].vertices[j].z = v.z;
+                objects[k].poly[i].vertices[j].z = v.z; 
+                objects[k].transformedVertex[old] = (objects[k].poly[i].vertices[j]+1) * 1000;
+                //objects[k].transformedVertex[old].print();
             }
         }
         objects[k].calculateNormals();
     }
     for (int k = 0; k < nObjects; k++)
     {
+        objects[k].updateAdjMap();
+    }
+    for (int k = 0; k < nObjects; k++)
+    {
         for (int i = 0; i < objects[k].nPoly; i++) {
             objects[k].poly[i].findScanLineLimit();
         }
-        objects[k].prandomColor();
         if (shadingModel == 2 || shadingModel == 3) {
             objects[k].calculate_vertex_normal();
         }
@@ -211,7 +217,7 @@ int main(void) {
     objects[nObjects].focus = 30;
     nObjects++;*/
     Pref = Vector(0, 0, 0);
-    Ccord = Vector(0, 1, 2);
+    Ccord = Vector(0, 3, 5);
     Vprime = Vector(0, 1, 0);
 
     // Add objects
@@ -221,7 +227,7 @@ int main(void) {
     objects[nObjects].ka = Vector(0.3, 0.3, 0.3);
     objects[nObjects].kd = Vector(0.3, 0.3, 0.3);
     objects[nObjects].ks = Vector(0.9, 0.9, 0.9);
-    objects[nObjects].focus = 30;
+    objects[nObjects].focus = 190;
     nObjects++;
 
     //object = getObject("./D files/knight.d.txt");
